@@ -3,6 +3,7 @@ console.log('hello world');
 const menuEmail = document.querySelector('.navbar-email');
 const desktopMenu = document.querySelector('.desktop-menu');
 const menuCarritoIcon = document.querySelector('.navbar-shopping-cart');
+const productsCounter = document.querySelector('.products-counter');
 const menuHamIcon = document.querySelector('.menu');
 const mobileMenu = document.querySelector('.mobile-menu');
 const shoppingCartAside = document.querySelector('.shopping-cart-container');
@@ -16,6 +17,7 @@ menuEmail.addEventListener('click', toggleDesktopMenu);
 menuHamIcon.addEventListener('click', toggleMobileMenu);
 menuCarritoIcon.addEventListener('click', toggleShoppingCartAside);
 productDetailCloseIcon.addEventListener('click', closeProductDetailAside);
+shoppingCartAside.addEventListener('onchange', showAddedProducts2);
 
 const productList = [];
 productList.push(
@@ -47,13 +49,29 @@ productList.push(
 
 let cartItems = [];
 function addToCart(id) {
-    console.log('add to cart');
-    console.log(id);
+    
     const product = productList.find(item => item.id === id);
-    console.log(product);
     cartItems.push(product);
-    console.log(cartItems);
-    showAddedProducts(cartItems, id);
+    
+    productsCounter.innerText = cartItems.length;
+    showAddedProducts2(cartItems);
+    getCartTotal(cartItems);
+}
+
+/*for (product of cartItems) {
+    if (cartItems.length > 0) {
+        total = 0;
+        console.log('Pasa por el if y el total es ' + total);
+        myOrderTotalPrice.innerHTML(toString(total));
+    }
+}*/
+
+function clearShoppingCart() {
+    const existingCartItems = shoppingCartAside.querySelectorAll('.shopping-cart');
+
+    existingCartItems.forEach(element => {
+        element.remove();       
+    });
 }
 
 function showAddedProducts(array, id) {
@@ -67,13 +85,81 @@ function showAddedProducts(array, id) {
             </figure>
             <p>${product.name}</p>
             <p>${product.price}</p>
-            <img src="./icons/icon_close.png" alt="close">
+            <img src="./icons/icon_close.png" alt="close" onclick="removeFromCart(${product.id})">
             `;
 
             shoppingCartAside.appendChild(cartItem);
             myOrderContent.insertAdjacentElement('beforebegin', cartItem);
         }
     }
+
+}
+
+function showAddedProducts2() {
+
+    clearShoppingCart();
+
+    for (product of cartItems) {
+        const cartItem = document.createElement('div');
+        cartItem.classList.add('shopping-cart');
+        cartItem.innerHTML = `
+        <figure>
+            <img src="${product.image}" alt="${product.name}"> 
+        </figure>
+        <p>${product.name}</p>
+        <p>${product.price}</p>
+        <img src="./icons/icon_close.png" alt="close" onclick="removeFromCart(${product.id})">
+        `;
+
+        shoppingCartAside.appendChild(cartItem);
+        myOrderContent.insertAdjacentElement('beforebegin', cartItem);
+    }
+
+}
+
+// function showCart(array) {
+//     for (product of array) {
+//         const cartItem = document.createElement('div');
+//         cartItem.classList.add('shopping-cart');
+//         cartItem.innerHTML = `
+//         <figure>
+//             <img src="${product.image}" alt="${product.name}"> 
+//         </figure>
+//         <p>${product.name}</p>
+//         <p>${product.price}</p>
+//         <img src="./icons/icon_close.png" alt="close" onclick="removeFromCart(${product.id})">
+//         `;
+
+//         shoppingCartAside.appendChild(cartItem);
+//         myOrderContent.insertAdjacentElement('beforebegin', cartItem);
+    
+//     }
+// }
+
+function removeFromCart(id) {
+    const product = cartItems.find(item => item.id === id);
+    
+    const index = cartItems.indexOf(product);
+    cartItems.splice(index, 1);
+    
+    productsCounter.innerText = cartItems.length;
+    showAddedProducts2(cartItems);
+    getCartTotal(cartItems, 'resta');
+}
+
+function getCartTotal(array, option='suma') {
+    let total = 0;
+    for (product of array) {
+        if (option === 'suma') {
+            total += product.price;
+        } else if (option === 'resta') {
+            total -= product.price;
+            console.log('Resta: ' + total);
+        }
+    }
+    
+    const orderTotal = document.querySelector('.order-value');
+    orderTotal.innerHTML = `$${total}`;
 }
 
 function toggleDesktopMenu() {
@@ -96,7 +182,7 @@ function toggleMobileMenu() {
     mobileMenu.classList.toggle('inactive');
 }
 
-function toggleShoppingCartAside(array) {
+function toggleShoppingCartAside() {
     const isMobileMenuOpen = !mobileMenu.classList.contains('inactive');
     const isDesktopMenuOpen = !desktopMenu.classList.contains('inactive');
     const isProductDetailOpen = !productDetailContainer.classList.contains('inactive');
@@ -197,13 +283,13 @@ function renderProducts2(arr) {
 
         productCard.innerHTML = `
                 <img src="${product.image}" alt="${product.name}" class="product-img">
-                <div class="product-info">
+                <div class="product-info-card">
                     <div>
-                        <p>$120,00</p>
-                        <p>Bike</p>
+                        <p>$ ${product.price}</p>
+                        <p>${product.name}</p>
                     </div>
                     <figure>
-                        <button onclick="addToCart(${product.id})">
+                        <button onclick="addToCart(${product.id})" class"add-cart-style">
                             <img src="./icons/bt_add_to_cart.svg" alt="add-to-cart">
                         </button>
                     </figure>
@@ -221,3 +307,4 @@ function renderProducts2(arr) {
 
 // renderProducts(productList);
 renderProducts2(productList);
+showAddedProducts2(cartItems);
