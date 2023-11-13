@@ -295,6 +295,7 @@ nav {
     height: 240px;
     border-radius: 20px;
     object-fit: cover; /*La imagen va a adecuarse al tamaño de la card*/
+    cursor: pointer;
 }
 
 .product-info-card {

@@ -117,6 +117,19 @@ function showAddedProducts2() {
 
 }
 
+function showProductDetail(id) {
+    const product = productList.find(item => item.id === id);
+    const productImage = document.querySelector('.product-detail-img');
+    productImage.src = product.image;
+    productImage.alt = product.name;
+    const productPrice = document.querySelector('.product-detail-price');
+    const productName = document.querySelector('.product-detail-name');
+    productPrice.innerHTML = `$${product.price}`;
+    productName.innerHTML = product.name;
+    const button = document.querySelector('.add-to-cart-btn');
+    button.setAttribute('onclick', `addToCart(${product.id})`);
+}
+
 // function showCart(array) {
 //     for (product of array) {
 //         const cartItem = document.createElement('div');
@@ -282,7 +295,7 @@ function renderProducts2(arr) {
         productCard.classList.add('product-card'); // Aquí agregamos la clase product-card al div creado anteriormente
 
         productCard.innerHTML = `
-                <img src="${product.image}" alt="${product.name}" class="product-img">
+                <img src="${product.image}" alt="${product.name}" class="product-img" onclick="showProductDetail(${product.id})">
                 <div class="product-info-card">
                     <div>
                         <p>$ ${product.price}</p>
