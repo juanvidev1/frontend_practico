@@ -8,12 +8,13 @@ const mobileMenu = document.querySelector('.mobile-menu');
 const shoppingCartAside = document.querySelector('.shopping-cart-container');
 const cardsContainer = document.querySelector('.cards-container');
 const productDetailContainer = document.querySelector('.product-detail');
+const productDetailCloseIcon = document.querySelector('.product-detail-close');
 
 
 menuEmail.addEventListener('click', toggleDesktopMenu);
 menuHamIcon.addEventListener('click', toggleMobileMenu);
 menuCarritoIcon.addEventListener('click', toggleShoppingCartAside);
-cardsContainer.addEventListener('click', goToProductDetail);
+productDetailCloseIcon.addEventListener('click', closeProductDetailAside);
 
 function toggleDesktopMenu() {
     const isShoppingCartClosed = !shoppingCartAside.classList.contains('inactive');
@@ -36,18 +37,47 @@ function toggleMobileMenu() {
 }
 
 function toggleShoppingCartAside() {
-    const isMobileMenuClosed = !mobileMenu.classList.contains('inactive');
-    const isDesktopMenuClosed = !desktopMenu.classList.contains('inactive');
+    const isMobileMenuOpen = !mobileMenu.classList.contains('inactive');
+    const isDesktopMenuOpen = !desktopMenu.classList.contains('inactive');
+    const isProductDetailOpen = !productDetailContainer.classList.contains('inactive');
     
-    if (isMobileMenuClosed) {
+    if (isMobileMenuOpen) {
         mobileMenu.classList.add('inactive');
     }
 
-    if (isDesktopMenuClosed) {
+    if (isDesktopMenuOpen) {
         desktopMenu.classList.add('inactive');
     }
 
+    if (isProductDetailOpen) {
+        productDetailContainer.classList.add('inactive');
+    }
+
     shoppingCartAside.classList.toggle('inactive');
+}
+
+function goToProductDetail() {
+    const isMobileMenuOpen = !mobileMenu.classList.contains('inactive');
+    const isDesktopMenuOpen = !desktopMenu.classList.contains('inactive');
+    const isShoppingCartOpen = !shoppingCartAside.classList.contains('inactive');
+
+    if (isMobileMenuOpen) {
+        mobileMenu.classList.add('inactive');
+    }
+
+    if (isDesktopMenuOpen) {
+        desktopMenu.classList.add('inactive');
+    }
+
+    if (isShoppingCartOpen) {
+        shoppingCartAside.classList.add('inactive');
+    }
+
+    productDetailContainer.classList.remove('inactive');
+}
+
+function closeProductDetailAside() {
+    productDetailContainer.classList.add('inactive');
 }
 
 const productList = [];
@@ -84,6 +114,7 @@ function renderProducts(arr) {
     
         const img = document.createElement('img'); // Aquí creamos un elemento img
         img.setAttribute('src', product.image); // Aquí le asignamos la imagen del producto al atributo src
+        img.addEventListener('click', goToProductDetail); // Aquí agregamos el evento click al elemento img
     
         const productInfo = document.createElement('div'); // Aquí creamos un div para ir agregando los elementos que queramos
         productInfo.classList.add('product-info'); // Aquí agregamos la clase product-info al div creado anteriormente
@@ -102,6 +133,7 @@ function renderProducts(arr) {
         const productFigure = document.createElement('figure'); // Aquí creamos un elemento figure para ir agregando los elementos que queramos
         const productFigureImg = document.createElement('img'); // Aquí creamos un elemento img para ir agregando los elementos que queramos
         productFigureImg.setAttribute('src', './icons/bt_add_to_cart.svg'); // Aquí le asignamos la imagen al elemento img creado anteriormente
+        
     
         /**
          * Luego hay que hacer la inserción de elementos según lo maquetado
@@ -119,7 +151,3 @@ function renderProducts(arr) {
 }
 
 renderProducts(productList);
-
-function goToProductDetail() {
-    //
-}
